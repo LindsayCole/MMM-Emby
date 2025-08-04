@@ -15,7 +15,7 @@ A module for [MagicMirror²](https://magicmirror.builders/) to display the statu
 
 ## Installation
 
-1.  Navigate into your MagicMirror's `modules` folder and execute `git clone https://github.com/your-github/MMM-Emby.git`.
+1.  Navigate into your MagicMirror's `modules` folder and execute `git clone https://github.com/LindsayCole/MMM-Emby.git`.
 2.  Navigate to the new `MMM-Emby` folder and run `npm install`. If you can't handle that, maybe this isn't for you.
 
 ## Using the module
