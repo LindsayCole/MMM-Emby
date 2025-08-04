@@ -1,0 +1,119 @@
+/*
+ * MagicMirror²
+ * Module: MMM-Emby
+ *
+ * By Lindsay Cole & Gemini
+ * MIT Licensed.
+ *
+ * A little digital paint and powder to make this pig look pretty.
+ */
+
+.emby-wrapper {
+  font-family: "Roboto", sans-serif;
+  max-width: 450px; /* You gotta have limits. */
+}
+
+.emby-server {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #222;
+}
+
+.emby-server:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.emby-server-name {
+  font-size: 1.1em;
+  margin-bottom: 5px;
+}
+
+.emby-server-name .fa {
+  margin-right: 8px;
+  color: #4a90e2;
+}
+
+.emby-stats {
+  margin-bottom: 15px;
+}
+.emby-stats span {
+  margin-right: 10px;
+}
+.emby-stats .fa {
+  margin-right: 5px;
+}
+
+/* Now Playing - The Star of the Show */
+.now-playing-item {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.now-playing-art {
+  width: 100px;
+  height: 150px;
+  margin-right: 15px;
+}
+
+.now-playing-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  background-color: #111;
+}
+
+.now-playing-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.now-playing-info div {
+  margin-bottom: 5px;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 4px;
+  background-color: #333;
+  border-radius: 2px;
+  margin-top: 5px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #4a90e2;
+  border-radius: 2px;
+}
+
+/* Recently Added - The Newcomers */
+.recently-added-wrapper {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px dashed #333;
+}
+
+.recently-added-wrapper ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0;
+}
+.recently-added-wrapper li {
+  margin-bottom: 5px;
+}
+
+/* Compact Layout - For when you're in a hurry */
+.emby-wrapper.compact .now-playing-art {
+  width: 50px;
+  height: 75px;
+  margin-right: 10px;
+}
+.emby-wrapper.compact .now-playing-item {
+  align-items: center;
+}
+.emby-wrapper.compact .recently-added-wrapper {
+  display: none; /* Too much clutter for a quick glance. */
+}
