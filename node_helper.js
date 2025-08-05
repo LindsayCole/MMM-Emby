@@ -3,6 +3,7 @@
 /*
  * MagicMirror²
  * Module: MMM-Emby
+ * Version: 0.50
  *
  * By Lindsay Cole & Gemini
  * MIT Licensed.
@@ -15,62 +16,69 @@ const NodeHelper = require("node_helper");
 const fetch = require("node-fetch");
 
 module.exports = NodeHelper.create({
-  start: function () {
-    console.log(`Starting node_helper for: ${this.name}. The engine is purring.`);
-  },
+    start: function () {
+        console.log(`Starting node_helper for: ${this.name} v0.50. The engine is purring.`);
+    },
 
-  // The phone rings. It's the front-end, wanting something. Always wanting something.
-  socketNotificationReceived: async function (notification, payload) {
-    if (notification === "GET_EMBY_DATA") {
-      const embyData = {};
-      // A for-loop is like a one-night stand. You get in, you get what you need, and you get out.
-      for (const server of payload.servers) {
-        embyData[server.name] = await this.getEmbyServerData(server, payload);
-      }
-      this.sendSocketNotification("EMBY_DATA", embyData);
-    }
-  },
+    // The phone rings. It's the front-end, wanting something. Always wanting something.
+    socketNotificationReceived: function (notification, payload) {
+        if (notification === "GET_EMBY_DATA") {
+            this.fetchAllServerData(payload.servers);
+        }
+    },
 
-  // The main hustle. Juggling API calls like a carny with too many torches.
-  getEmbyServerData: async function (server, config) {
-    try {
-      const serverData = {};
-      const baseUrl = `${server.host}:${server.port}/emby`;
-      const apiKey = `api_key=${server.apiKey}`;
+    // The main hustle. Juggling API calls like a carny with too many torches.
+    fetchAllServerData: async function (servers) {
+        const embyData = {};
+        const promises = servers.map(server => this.getEmbyServerData(server).catch(error => {
+            // Sometimes you swing and miss. That's life. And that's APIs.
+            console.error(`[MMM-Emby] Error fetching data for ${server.name}. She's a cruel mistress.`, error);
+            return { name: server.name, data: null }; // Return null on error so Promise.all doesn't fail completely.
+        }));
 
-      // We're making a list, checking it twice... or just hitting a bunch of endpoints. Whatever.
-      const requests = [
-        this.fetchData(`${baseUrl}/System/Info?${apiKey}`),
-        this.fetchData(`${baseUrl}/Sessions?${apiKey}&IncludeItemTypes=Movie,Episode`),
-      ];
+        const results = await Promise.all(promises);
 
-      if (config.showRecentlyAdded) {
-        requests.push(this.fetchData(`${baseUrl}/Users/Public/Items/Latest?Limit=${config.recentlyAddedCount}&IncludeItemTypes=Movie,Episode&${apiKey}`));
-      }
+        results.forEach(result => {
+            embyData[result.name] = result.data;
+        });
 
-      const [serverInfo, sessions, recentlyAdded] = await Promise.all(requests);
+        this.sendSocketNotification("EMBY_DATA", embyData);
+    },
 
-      serverData.serverInfo = serverInfo;
-      serverData.sessions = sessions;
-      if (config.showRecentlyAdded) {
+    getEmbyServerData: async function (server) {
+        const serverData = {};
+        const baseUrl = `${server.host}:${server.port}/emby`;
+        const apiKey = `api_key=${server.apiKey}`;
+
+        // We're making a list, checking it twice... or just hitting a bunch of endpoints. Whatever.
+        const requests = [
+            this.fetchData(`${baseUrl}/System/Info?${apiKey}`),
+            this.fetchData(`${baseUrl}/Sessions?${apiKey}&IncludeItemTypes=Movie,Episode`),
+        ];
+
+        // Only bother fetching recently added if the user actually wants to see it.
+        if (server.showRecentlyAdded) {
+            requests.push(this.fetchData(`${baseUrl}/Users/Public/Items/Latest?Limit=${server.recentlyAddedCount}&IncludeItemTypes=Movie,Episode&${apiKey}`));
+        } else {
+            requests.push(Promise.resolve(null)); // Push a resolved promise to keep the array structure.
+        }
+
+        const [serverInfo, sessions, recentlyAdded] = await Promise.all(requests);
+
+        serverData.serverInfo = serverInfo;
+        serverData.sessions = sessions;
         serverData.recentlyAdded = recentlyAdded;
-      }
 
-      return serverData;
-    } catch (error) {
-      // Sometimes you swing and miss. That's life. And that's APIs.
-      console.error(`[MMM-Emby] Error fetching data for ${server.name}. She's a cruel mistress.`, error);
-      return null;
-    }
-  },
+        return { name: server.name, data: serverData };
+    },
 
-  // A simple little function to fetch data. It's not glamorous, but it pays the bills.
-  fetchData: async function (url) {
-    const response = await fetch(url);
-    if (!response.ok) {
-      // If the server's not in the mood, you can't force it.
-      throw new Error(`HTTP error! status: ${response.status} for URL: ${url}`);
-    }
-    return await response.json();
-  },
+    // A simple little function to fetch data. It's not glamorous, but it pays the bills.
+    fetchData: async function (url) {
+        const response = await fetch(url);
+        if (!response.ok) {
+            // If the server's not in the mood, you can't force it.
+            throw new Error(`HTTP error! status: ${response.status} for URL: ${url}`);
+        }
+        return await response.json();
+    },
 });
