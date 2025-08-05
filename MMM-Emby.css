@@ -1,6 +1,7 @@
 /*
  * MagicMirror²
  * Module: MMM-Emby
+ * Version: 0.50
  *
  * By Lindsay Cole & Gemini
  * MIT Licensed.
@@ -44,6 +45,12 @@
   margin-right: 5px;
 }
 
+/* Give the transcoding stat a little life. A nervous twitch. */
+.emby-stats .transcoding .fa-cogs {
+  animation: fa-spin 2s infinite linear;
+  color: #ffcc00;
+}
+
 /* Now Playing - The Star of the Show */
 .now-playing-item {
   display: flex;
@@ -54,6 +61,7 @@
   width: 100px;
   height: 150px;
   margin-right: 15px;
+  flex-shrink: 0;
 }
 
 .now-playing-art img {
@@ -106,14 +114,22 @@
 }
 
 /* Compact Layout - For when you're in a hurry */
-.emby-wrapper.compact .now-playing-art {
+.emby-wrapper .emby-server.compact .now-playing-art {
   width: 50px;
   height: 75px;
   margin-right: 10px;
 }
-.emby-wrapper.compact .now-playing-item {
+.emby-wrapper .emby-server.compact .now-playing-item {
   align-items: center;
 }
-.emby-wrapper.compact .recently-added-wrapper {
+.emby-wrapper .emby-server.compact .recently-added-wrapper {
   display: none; /* Too much clutter for a quick glance. */
+}
+
+/* The 'Something's Fucked' Message */
+.offline-message {
+  color: #ffcc00; /* A nice, alarming yellow. */
+}
+.offline-message .fa {
+  margin-right: 5px;
 }
