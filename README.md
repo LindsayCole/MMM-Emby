@@ -11,11 +11,13 @@ A module for [MagicMirror²](https://magicmirror.builders/) to display the statu
 * **Server Stats.** At-a-glance view of active streams and transcodes for the number-crunchers among us.
 * **Recently Added.** See the latest arrivals to your library. The new flesh.
 * **Customizable Layouts.** Choose between a `detailed` view for the full monty, or a space-saving `compact` view for a quick peek.
+* **Display Order Control.** You decide what's on top. Put the sections in any order you damn well please.
+* **Honest Error Handling.** If a server goes offline, the module will tell you. No sugarcoating.
 * **Highly configurable.** Because commitment is for suckers and your mirror should be as fickle as you are.
 
 ## Installation
 
-1.  Navigate into your MagicMirror's `modules` folder and execute `git clone https://github.com/LindsayCole/MMM-Emby.git`.
+1.  Navigate into your MagicMirror's `modules` folder and execute `git clone https://github.com/your-github/MMM-Emby.git`.
 2.  Navigate to the new `MMM-Emby` folder and run `npm install`. If you can't handle that, maybe this isn't for you.
 
 ## Using the module
@@ -41,7 +43,8 @@ To use this module, add the following configuration block to the modules array i
                 apiKey: "ANOTHER_KEY_FOR_ANOTHER_DOOR"
             }
         ],
-        layout: "detailed", // 'detailed' or 'compact'
+        layout: "detailed", 
+        displayOrder: ["nowPlaying", "stats", "recentlyAdded"],
         showServerStats: true,
         showNowPlaying: true,
         showRecentlyAdded: true,
@@ -61,6 +64,7 @@ To use this module, add the following configuration block to the modules array i
 | `servers.port`        | The port. Usually `8096`.                                                                                | `8096`        |
 | `servers.apiKey`      | The API key. The keys to the kingdom. Don't share it unless you want company.                            | `null`        |
 | `layout`              | `'detailed'` for the full experience, `'compact'` for a quick glance.                                    | `'detailed'`  |
+| `displayOrder`        | An array to set the order of sections. Options: `'stats'`, `'nowPlaying'`, `'recentlyAdded'`.             | `['stats', 'nowPlaying', 'recentlyAdded']` |
 | `showServerStats`     | `true` to show active streams and transcode counts.                                                      | `true`        |
 | `showNowPlaying`      | `true` to show the glorious "Now Playing" section. This is the main event.                               | `true`        |
 | `showRecentlyAdded`   | `true` to show the list of new arrivals.                                                                 | `false`       |
