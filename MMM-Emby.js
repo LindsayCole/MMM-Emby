@@ -17,6 +17,7 @@ Module.register("MMM-Emby", {
   defaults: {
     servers: [],
     layout: "detailed", // 'detailed' or 'compact'
+    displayOrder: ["stats", "nowPlaying", "recentlyAdded"], // The pecking order.
     showServerStats: true,
     showNowPlaying: true,
     showRecentlyAdded: false,
@@ -55,19 +56,33 @@ Module.register("MMM-Emby", {
     }
 
     this.config.servers.forEach((server) => {
-      const serverData = this.embyData[server.name];
-      if (!serverData) return; // If the server's not talking, we're not listening.
-
       const serverWrapper = document.createElement("div");
       serverWrapper.className = "emby-server";
-
+      
       const serverName = document.createElement("div");
       serverName.className = "emby-server-name bright";
-      serverName.innerHTML = `<i class="fa fa-server"></i> ${server.name} <span class="dimmed small">(${serverData.serverInfo.Version})</span>`;
+      serverName.innerHTML = `<i class="fa fa-server"></i> ${server.name}`;
       serverWrapper.appendChild(serverName);
 
+      const serverData = this.embyData[server.name];
+      
+      // Honesty is the best policy, especially when your server is taking a nap.
+      if (!serverData) {
+        const offlineMsg = document.createElement("div");
+        offlineMsg.className = "offline-message small dimmed";
+        offlineMsg.innerHTML = `<i class="fa fa-exclamation-triangle"></i> Server Offline`;
+        serverName.innerHTML += ` <span class="dimmed small">(Offline)</span>`;
+        serverWrapper.appendChild(offlineMsg);
+        wrapper.appendChild(serverWrapper);
+        return; // Move on, nothing to see here.
+      }
+
+      // If we're here, the server is talking. Let's see what it has to say.
+      serverName.innerHTML += ` <span class="dimmed small">(${serverData.serverInfo.Version})</span>`;
+      
+      const components = {};
+
       // --- Server Stats ---
-      // For the bean counters and number crunchers.
       if (this.config.showServerStats && serverData.sessions) {
         const statsWrapper = document.createElement("div");
         statsWrapper.className = "emby-stats small";
@@ -79,11 +94,10 @@ Module.register("MMM-Emby", {
           <span class="dimmed">|</span>
           <span><i class="fa fa-cogs"></i> ${transcodeCount} Transcoding</span>
         `;
-        serverWrapper.appendChild(statsWrapper);
+        components.stats = statsWrapper;
       }
       
       // --- Now Playing ---
-      // The main event. The reason we're all here.
       if (this.config.showNowPlaying && serverData.sessions) {
         const nowPlayingSessions = serverData.sessions.filter(s => s.NowPlayingItem);
         if(nowPlayingSessions.length > 0) {
@@ -96,7 +110,6 @@ Module.register("MMM-Emby", {
                 itemWrapper.className = "now-playing-item";
 
                 const artUrl = `${server.host}:${server.port}/emby/Items/${item.Id}/Images/Primary?maxHeight=150&tag=${item.ImageTags.Primary}&quality=90`;
-
                 let seriesInfo = item.Type === 'Episode' ? `${item.SeriesName} <span class="dimmed">${item.SeasonName}</span>` : '';
 
                 itemWrapper.innerHTML = `
@@ -114,12 +127,11 @@ Module.register("MMM-Emby", {
                 `;
                 nowPlayingWrapper.appendChild(itemWrapper);
             });
-            serverWrapper.appendChild(nowPlayingWrapper);
+            components.nowPlaying = nowPlayingWrapper;
         }
       }
 
       // --- Recently Added ---
-      // The new flesh. The fresh meat.
       if (this.config.showRecentlyAdded && serverData.recentlyAdded) {
         const recentWrapper = document.createElement("div");
         recentWrapper.className = "recently-added-wrapper small";
@@ -133,8 +145,15 @@ Module.register("MMM-Emby", {
             list.appendChild(listItem);
         });
         recentWrapper.appendChild(list);
-        serverWrapper.appendChild(recentWrapper);
+        components.recentlyAdded = recentWrapper;
       }
+
+      // Now, let's assemble this Frankenstein's monster in the order the user wants.
+      this.config.displayOrder.forEach(section => {
+        if (components[section]) {
+          serverWrapper.appendChild(components[section]);
+        }
+      });
 
       wrapper.appendChild(serverWrapper);
     });
