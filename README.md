@@ -1,4 +1,4 @@
-# MagicMirror² Module: MMM-Emby v0.50
+# MagicMirror² Module: MMM-Emby
 
 A module for [MagicMirror²](https://magicmirror.builders/) to display the status of your Emby servers. Now with more features than you can shake a stick at.
 
