@@ -1,4 +1,4 @@
-# MagicMirror² Module: MMM-Emby
+# MagicMirror² Module: MMM-Emby v0.50
 
 A module for [MagicMirror²](https://magicmirror.builders/) to display the status of your Emby servers. Now with more features than you can shake a stick at.
 
@@ -7,11 +7,10 @@ A module for [MagicMirror²](https://magicmirror.builders/) to display the statu
 ## Features
 
 * **Monitors multiple Emby servers.** It's a digital harem, and you're the sultan.
-* **Now Playing Details.** Shows what's being watched, by whom, on what device, complete with poster art and a progress bar. Because knowing is half the battle.
-* **Server Stats.** At-a-glance view of active streams and transcodes for the number-crunchers among us.
-* **Recently Added.** See the latest arrivals to your library. The new flesh.
-* **Customizable Layouts.** Choose between a `detailed` view for the full monty, or a space-saving `compact` view for a quick peek.
-* **Display Order Control.** You decide what's on top. Put the sections in any order you damn well please.
+* **Detailed "Now Playing" Info.** Shows what's being watched, by whom, on what device, with poster art, progress bar, stream type (`Transcode`, `Direct Play`), and even the damn end time.
+* **Per-Server Configuration.** Each server can have its own layout, display order, and settings. Because one size never truly fits all.
+* **Visual Flair.** A subtle, pulsing animation on the transcoding icon to draw your eye to the important shit.
+* **Smarter TV Art.** An option to show the main series poster for episodes, which usually looks better than a random thumbnail.
 * **Honest Error Handling.** If a server goes offline, the module will tell you. No sugarcoating.
 * **Highly configurable.** Because commitment is for suckers and your mirror should be as fickle as you are.
 
@@ -22,7 +21,7 @@ A module for [MagicMirror²](https://magicmirror.builders/) to display the statu
 
 ## Using the module
 
-To use this module, add the following configuration block to the modules array in your `config/config.js` file. Try not to fuck it up.
+To use this module, add the following configuration block to the modules array in your `config/config.js` file. This example shows how you can give each server its own personality.
 
 ```javascript
 {
@@ -31,24 +30,30 @@ To use this module, add the following configuration block to the modules array i
     config: {
         servers: [
             {
+                // This one is the full-blown experience.
                 name: "The Mothership",
                 host: "[http://192.168.1.100](http://192.168.1.100)",
                 port: 8096,
-                apiKey: "YOUR_SECRET_HANDSHAKE"
+                apiKey: "YOUR_SECRET_HANDSHAKE",
+                layout: "detailed", 
+                displayOrder: ["nowPlaying", "stats", "recentlyAdded"],
+                showServerStats: true,
+                showNowPlaying: true,
+                showRecentlyAdded: true,
+                recentlyAddedCount: 5,
+                useSeriesPoster: true
             },
             {
+                // This one is just the facts, ma'am.
                 name: "The Backup Plan",
                 host: "[http://192.168.1.101](http://192.168.1.101)",
                 port: 8096,
-                apiKey: "ANOTHER_KEY_FOR_ANOTHER_DOOR"
+                apiKey: "ANOTHER_KEY_FOR_ANOTHER_DOOR",
+                layout: "compact",
+                showNowPlaying: false, // We don't care what's playing here.
+                showServerStats: true
             }
         ],
-        layout: "detailed", 
-        displayOrder: ["nowPlaying", "stats", "recentlyAdded"],
-        showServerStats: true,
-        showNowPlaying: true,
-        showRecentlyAdded: true,
-        recentlyAddedCount: 5,
         fontAwesomeVersion: 5
     }
 },
@@ -56,22 +61,27 @@ To use this module, add the following configuration block to the modules array i
 
 ## Configuration Options
 
-| Option                | Description                                                                                              | Default       |
-| --------------------- | -------------------------------------------------------------------------------------------------------- | ------------- |
-| `servers`             | An array of your Emby servers. Add as many as you can handle.                                            | `[]`          |
-| `servers.name`        | A name for the server. Give it some personality.                                                         | `null`        |
-| `servers.host`        | The server's IP address or hostname. The digital address.                                                | `null`        |
-| `servers.port`        | The port. Usually `8096`.                                                                                | `8096`        |
-| `servers.apiKey`      | The API key. The keys to the kingdom. Don't share it unless you want company.                            | `null`        |
-| `layout`              | `'detailed'` for the full experience, `'compact'` for a quick glance.                                    | `'detailed'`  |
-| `displayOrder`        | An array to set the order of sections. Options: `'stats'`, `'nowPlaying'`, `'recentlyAdded'`.             | `['stats', 'nowPlaying', 'recentlyAdded']` |
-| `showServerStats`     | `true` to show active streams and transcode counts.                                                      | `true`        |
-| `showNowPlaying`      | `true` to show the glorious "Now Playing" section. This is the main event.                               | `true`        |
-| `showRecentlyAdded`   | `true` to show the list of new arrivals.                                                                 | `false`       |
-| `recentlyAddedCount`  | How many new items to show. Don't get greedy.                                                            | `5`           |
-| `fontAwesomeVersion`  | Set to `4` or `5` depending on your core MagicMirror setup. Mismatching is a bad look.                   | `5`           |
-| `updateInterval`      | How often to poke the server for new info (in milliseconds).                                             | `60000`       |
+### Global Options
 
+| Option             | Description                                                                              | Default |
+| ------------------ | ---------------------------------------------------------------------------------------- | ------- |
+| `servers`          | An array of your Emby server objects. This is the main event.                            | `[]`    |
+| `updateInterval`   | How often to poke the servers for new info (in milliseconds).                            | `60000` |
+| `fontAwesomeVersion` | Set to `4` or `5` depending on your core MagicMirror setup. Mismatching is a bad look. | `5`     |
+
+### Per-Server Options
+
+These can be set for each server in the `servers` array. If you don't set them, they'll use a reasonable default.
+
+| Option               | Description                                                                                      | Default                                    |
+| -------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------ |
+| `layout`             | `'detailed'` for the full experience, `'compact'` for a quick glance.                            | `'detailed'`                               |
+| `displayOrder`       | An array to set the order of sections. Options: `'stats'`, `'nowPlaying'`, `'recentlyAdded'`.      | `['stats', 'nowPlaying', 'recentlyAdded']` |
+| `showServerStats`    | `true` to show active streams and transcode counts.                                              | `true`                                     |
+| `showNowPlaying`     | `true` to show the glorious "Now Playing" section.                                               | `true`                                     |
+| `showRecentlyAdded`  | `true` to show the list of new arrivals.                                                         | `false`                                    |
+| `recentlyAddedCount` | How many new items to show. Don't get greedy.                                                    | `5`                                        |
+| `useSeriesPoster`    | For TV episodes, `true` shows the main series art. `false` shows the episode thumbnail.          | `true`                                     |
 
 ## Dependencies
 
