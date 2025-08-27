@@ -1,4 +1,4 @@
-# MagicMirror² Module: MMM-Emby - NOT TESTED
+# MagicMirror² Module: MMM-Emby
 
 A module for [MagicMirror²](https://magicmirror.builders/) to display the status of your Emby servers. Now with more features than you can shake a stick at.
 
@@ -32,7 +32,7 @@ To use this module, add the following configuration block to the modules array i
             {
                 // This one is the full-blown experience.
                 name: "The Mothership",
-                host: "[http://192.168.1.100](http://192.168.1.100)",
+                host: "http://192.168.1.100",
                 port: 8096,
                 apiKey: "YOUR_SECRET_HANDSHAKE",
                 layout: "detailed", 
@@ -46,7 +46,7 @@ To use this module, add the following configuration block to the modules array i
             {
                 // This one is just the facts, ma'am.
                 name: "The Backup Plan",
-                host: "[http://192.168.1.101](http://192.168.1.101)",
+                host: "http://192.168.1.101",
                 port: 8096,
                 apiKey: "ANOTHER_KEY_FOR_ANOTHER_DOOR",
                 layout: "compact",
@@ -85,7 +85,7 @@ These can be set for each server in the `servers` array. If you don't set them, 
 
 ## Dependencies
 
-* [node-fetch](https://www.npmjs.com/package/node-fetch)
+* [request](https://www.npmjs.com/package/request)
 
 Installed automatically. Don't worry your pretty little head about it.
 

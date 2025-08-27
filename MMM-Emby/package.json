@@ -1,0 +1,20 @@
+{
+  "name": "mmm-emby",
+  "version": "0.5.0",
+  "description": "A MagicMirror² module to display Emby server status and now playing information",
+  "main": "MMM-Emby.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "MagicMirror",
+    "module",
+    "Emby",
+    "media server"
+  ],
+  "author": "Lindsay Cole & Gemini",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.88.2"
+  }
+}

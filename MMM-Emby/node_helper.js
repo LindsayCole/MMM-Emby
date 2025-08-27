@@ -72,7 +72,6 @@ module.exports = NodeHelper.create({
         };
 
         // Track requests for this server
-        var requestsForServer = 0;
         var completedRequests = 0;
         var expectedRequests = 1; // System info is always requested
 

@@ -8,12 +8,10 @@
  * By Lindsay Cole & Gemini
  * MIT Licensed.
  *
-
  * This thing is like a cheap suit. It looks okay on the outside,
  * but the lining is full of questionable decisions and smells faintly of regret.
  * But hey, it gets the job done.
  */
-
 
 Module.register('MMM-Emby', {
 
