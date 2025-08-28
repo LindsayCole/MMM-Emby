@@ -292,6 +292,11 @@
   display: none; /* Too much clutter for a quick glance. */
 }
 
+/* Hide version in compact view for cleaner look */
+.emby-wrapper .emby-server.compact .version {
+  display: none;
+}
+
 /* The 'Something's Fucked' Message - honest error reporting */
 .offline-message {
   color: #ffcc00; /* A nice, alarming yellow. */
