@@ -38,6 +38,7 @@ Module.register('MMM-Emby', {
 
     socketNotificationReceived: function(notification, payload) {
         if (notification === 'EMBY_DATA_RESULT') {
+            Log.info('[MMM-Emby] Received server data:', JSON.stringify(payload, null, 2));
             this.serverData = payload;
             this.loaded = true;
             this.updateDom(this.config.animationSpeed);
@@ -129,10 +130,15 @@ Module.register('MMM-Emby', {
         var iconPrefix = this.config.fontAwesomeVersion === 4 ? 'fa' : 'fas';
         var statsHtml = '';
         
+        // Debug logging to see what data we're working with
+        Log.info(`[MMM-Emby] Adding stats for ${server.name}: online=${server.online}, activeUsers=${server.stats ? server.stats.activeUsers : 'undefined'}, transcoding=${server.stats ? server.stats.transcodingSessions : 'undefined'}`);
+        
         // For compact layout, we're going full sci-fi dashboard
         if (server.config.layout === 'compact') {
             var totalStreams = server.stats ? server.stats.activeUsers : 0;
             var transcodingStreams = server.stats ? server.stats.transcodingSessions : 0;
+            
+            Log.info(`[MMM-Emby] Compact view for ${server.name}: totalStreams=${totalStreams}, transcodingStreams=${transcodingStreams}`);
             
             statsHtml += '<div class="compact-stats-container">';
             if (server.online) {

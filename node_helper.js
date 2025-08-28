@@ -141,15 +141,21 @@ module.exports = NodeHelper.create({
                         });
                         
                         // Calculate stats - the numbers that matter
-                        var activeSessions = sessions.filter(function(session) {
-                            return session.NowPlayingItem || session.PlayState;
-                        });
-                        serverInfo.stats.activeUsers = activeSessions.length;
+                        // Count all sessions that have any activity - because we want the real numbers
+                        serverInfo.stats.activeUsers = sessions.length;
+                        
+                        // Count transcoding sessions - when your server is working overtime
                         serverInfo.stats.transcodingSessions = sessions.filter(function(session) {
-                            return session.TranscodingInfo && session.TranscodingInfo.IsVideoDirect === false;
+                            return session.TranscodingInfo && 
+                                   session.TranscodingInfo.IsVideoDirect === false;
                         }).length;
                         
-                        Log.info(`[MMM-Emby] Successfully received ${serverInfo.sessions.length} now playing, ${serverInfo.stats.activeUsers} total active sessions for ${server.name}.`);
+                        Log.info(`[MMM-Emby] ${server.name} - Total sessions: ${sessions.length}, Now playing: ${serverInfo.sessions.length}, Active users: ${serverInfo.stats.activeUsers}, Transcoding: ${serverInfo.stats.transcodingSessions}`);
+                        
+                        // Debug: Log the raw session data to see what we're working with
+                        if (sessions.length > 0) {
+                            Log.info(`[MMM-Emby] ${server.name} - Sample session data:`, JSON.stringify(sessions[0], null, 2));
+                        }
                     } catch (e) {
                         Log.error(`[MMM-Emby] Error parsing sessions JSON for ${server.name}: ${e}`);
                     }
