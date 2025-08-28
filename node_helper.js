@@ -141,12 +141,15 @@ module.exports = NodeHelper.create({
                         });
                         
                         // Calculate stats - the numbers that matter
-                        serverInfo.stats.activeUsers = sessions.length;
+                        var activeSessions = sessions.filter(function(session) {
+                            return session.NowPlayingItem || session.PlayState;
+                        });
+                        serverInfo.stats.activeUsers = activeSessions.length;
                         serverInfo.stats.transcodingSessions = sessions.filter(function(session) {
                             return session.TranscodingInfo && session.TranscodingInfo.IsVideoDirect === false;
                         }).length;
                         
-                        Log.info(`[MMM-Emby] Successfully received ${serverInfo.sessions.length} active sessions for ${server.name}.`);
+                        Log.info(`[MMM-Emby] Successfully received ${serverInfo.sessions.length} now playing, ${serverInfo.stats.activeUsers} total active sessions for ${server.name}.`);
                     } catch (e) {
                         Log.error(`[MMM-Emby] Error parsing sessions JSON for ${server.name}: ${e}`);
                     }

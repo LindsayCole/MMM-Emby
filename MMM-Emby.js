@@ -91,8 +91,8 @@ Module.register('MMM-Emby', {
             // Server name
             var nameDiv = document.createElement('div');
             nameDiv.className = 'emby-server-name';
-            var iconClass = this.config.fontAwesomeVersion === 4 ? 'fa fa-play-circle' : 'fas fa-play-circle';
-            nameDiv.innerHTML = '<i class="' + iconClass + '"></i>' + server.name;
+            // Use the Emby logo - because branding matters, even in the digital afterlife
+            nameDiv.innerHTML = '<span class="emby-logo">📺</span>' + server.name;
             if (server.systemInfo && server.systemInfo.Version) {
                 nameDiv.innerHTML += ' <span class="version">v' + server.systemInfo.Version + '</span>';
             }
@@ -131,30 +131,35 @@ Module.register('MMM-Emby', {
         
         // For compact layout, we're going full sci-fi dashboard
         if (server.config.layout === 'compact') {
-            var totalStreams = server.stats.activeUsers;
-            var transcodingStreams = server.stats.transcodingSessions;
+            var totalStreams = server.stats ? server.stats.activeUsers : 0;
+            var transcodingStreams = server.stats ? server.stats.transcodingSessions : 0;
             
-            if (totalStreams > 0) {
-                statsHtml += '<div class="compact-stats-container">';
-                statsHtml += '<div class="stream-indicator">';
-                statsHtml += '<div class="stream-count">' + totalStreams + '</div>';
-                statsHtml += '<div class="stream-label">ACTIVE</div>';
-                if (transcodingStreams > 0) {
-                    statsHtml += '<div class="transcoding-indicator">';
-                    statsHtml += '<i class="' + iconPrefix + ' fa-cogs transcoding-icon"></i>';
-                    statsHtml += '<span class="transcoding-count">' + transcodingStreams + '</span>';
+            statsHtml += '<div class="compact-stats-container">';
+            if (server.online) {
+                if (totalStreams > 0) {
+                    statsHtml += '<div class="stream-indicator active">';
+                    statsHtml += '<div class="stream-count">' + totalStreams + '</div>';
+                    statsHtml += '<div class="stream-label">ACTIVE</div>';
+                    if (transcodingStreams > 0) {
+                        statsHtml += '<div class="transcoding-indicator">';
+                        statsHtml += '<i class="' + iconPrefix + ' fa-cogs transcoding-icon"></i>';
+                        statsHtml += '<span class="transcoding-count">' + transcodingStreams + '</span>';
+                        statsHtml += '</div>';
+                    }
+                    statsHtml += '</div>';
+                } else {
+                    statsHtml += '<div class="stream-indicator online">';
+                    statsHtml += '<div class="status-icon">✓</div>';
+                    statsHtml += '<div class="stream-label">ONLINE</div>';
                     statsHtml += '</div>';
                 }
-                statsHtml += '</div>';
-                statsHtml += '</div>';
-            } else if (server.online) {
-                statsHtml += '<div class="compact-stats-container">';
-                statsHtml += '<div class="stream-indicator idle">';
-                statsHtml += '<div class="stream-count">0</div>';
-                statsHtml += '<div class="stream-label">IDLE</div>';
-                statsHtml += '</div>';
+            } else {
+                statsHtml += '<div class="stream-indicator offline">';
+                statsHtml += '<div class="status-icon">✗</div>';
+                statsHtml += '<div class="stream-label">OFFLINE</div>';
                 statsHtml += '</div>';
             }
+            statsHtml += '</div>';
         } else {
             // Standard detailed view - because sometimes you want the full story
             if (server.stats.activeUsers > 0) {
