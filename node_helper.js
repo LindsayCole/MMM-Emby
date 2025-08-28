@@ -10,6 +10,7 @@
  *
  * This is the back alley of the module. It's dark, a little grimy,
  * and you're not entirely sure what's going on, but somehow, you get what you came for.
+ * Now with more comments than a bitter film critic.
  */
 
 const NodeHelper = require('node_helper');
@@ -29,22 +30,27 @@ module.exports = NodeHelper.create({
         Log.info(`[MMM-Emby] Socket notification received: ${notification}`);
 
         if (notification === 'GET_EMBY_DATA') {
-            // Defensive coding: Ensure payload and config exist before using them.
+            // Defensive coding: Ensure payload and config exist before using them
+            // Because trusting user input is like trusting a politician's promise
             if (!payload || !payload.config) {
                 Log.error("[MMM-Emby] Received GET_EMBY_DATA but payload or config is missing!");
-                return; // Stop execution if config is not provided.
+                return; // Stop execution if config is not provided
             }
-            // Log the received config to ensure it's correct
+            // Log the received config to ensure it's correct - trust but verify
             Log.info(`[MMM-Emby] Received config for ${payload.config.servers.length} server(s).`);
             this.getData(payload.config);
         }
     },
 
+    /**
+     * Main data fetching orchestrator.
+     * Like a conductor for a very digital, very nerdy orchestra.
+     */
     getData: function(config) {
         var self = this;
         var servers = config.servers;
         
-        // Reset data for fresh fetch
+        // Reset data for fresh fetch - clean slate, fresh start
         this.serverData = [];
         this.totalServers = servers.length;
         this.pendingRequests = 0;
@@ -54,6 +60,11 @@ module.exports = NodeHelper.create({
         });
     },
 
+    /**
+     * Fetch data for a single server.
+     * This is where we sweet-talk the Emby API into giving us what we want.
+     * Sometimes it cooperates, sometimes it doesn't. Such is life.
+     */
     getServerData: function(server, index) {
         var self = this;
         var serverInfo = {
@@ -71,14 +82,18 @@ module.exports = NodeHelper.create({
             }
         };
 
-        // Track requests for this server
+        // Track requests for this server - because we're responsible adults who clean up after ourselves
         var completedRequests = 0;
-        var expectedRequests = 1; // System info is always requested
+        var expectedRequests = 1; // System info is always requested - gotta know if anyone's home
 
-        // Determine how many requests we'll make based on config
+        // Determine how many requests we'll make based on config - no point asking for shit we don't want
         if (server.showNowPlaying !== false) expectedRequests++;
         if (server.showRecentlyAdded === true) expectedRequests++;
 
+        /**
+         * Check if we're done with this server.
+         * When all requests complete, we move on with our lives.
+         */
         function checkComplete() {
             completedRequests++;
             if (completedRequests === expectedRequests) {
@@ -92,7 +107,7 @@ module.exports = NodeHelper.create({
             }
         }
 
-        // 1. Get System Info
+        // 1. Get System Info - the digital handshake
         var systemUrl = server.host + ':' + server.port + '/emby/System/Info?api_key=' + server.apiKey;
         Log.info(`[MMM-Emby] Fetching system info for server: ${server.name} from URL: ${systemUrl}`);
 
@@ -112,7 +127,7 @@ module.exports = NodeHelper.create({
             checkComplete();
         });
 
-        // 2. Get Sessions (Now Playing)
+        // 2. Get Sessions (Now Playing) - who's watching what and how
         if (server.showNowPlaying !== false) {
             var sessionsUrl = server.host + ':' + server.port + '/emby/Sessions?api_key=' + server.apiKey;
             Log.info(`[MMM-Emby] Fetching sessions for server: ${server.name}`);
@@ -125,7 +140,7 @@ module.exports = NodeHelper.create({
                             return session.NowPlayingItem && session.NowPlayingItem.Id;
                         });
                         
-                        // Calculate stats
+                        // Calculate stats - the numbers that matter
                         serverInfo.stats.activeUsers = sessions.length;
                         serverInfo.stats.transcodingSessions = sessions.filter(function(session) {
                             return session.TranscodingInfo && session.TranscodingInfo.IsVideoDirect === false;
@@ -143,7 +158,7 @@ module.exports = NodeHelper.create({
             });
         }
 
-        // 3. Get Recently Added
+        // 3. Get Recently Added - the fresh meat
         if (server.showRecentlyAdded === true) {
             var recentCount = server.recentlyAddedCount || 5;
             var recentUrl = server.host + ':' + server.port + '/emby/Items/Latest?Limit=' + recentCount + '&api_key=' + server.apiKey;

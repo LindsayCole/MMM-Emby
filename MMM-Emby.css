@@ -7,11 +7,34 @@
  * MIT Licensed.
  *
  * A little digital paint and powder to make this pig look pretty.
+ * Now with more futuristic flair than a Blade Runner sequel.
  */
 
 .emby-wrapper {
   font-family: "Roboto", sans-serif;
   max-width: 450px; /* You gotta have limits. */
+}
+
+/* Horizontal layout - because sometimes you want your servers lined up like a firing squad */
+.emby-wrapper.horizontal-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  max-width: none;
+}
+
+.emby-wrapper.horizontal-layout .emby-server {
+  flex: 1;
+  min-width: 300px;
+  margin-bottom: 0;
+  border-bottom: none;
+  border-right: 1px solid #222;
+  padding-right: 20px;
+}
+
+.emby-wrapper.horizontal-layout .emby-server:last-child {
+  border-right: none;
+  padding-right: 0;
 }
 
 .emby-server {
@@ -53,10 +76,98 @@
   margin-right: 5px;
 }
 
-/* Give the transcoding stat a little life. A nervous twitch. */
+/* Give the transcoding stat a little life. A nervous twitch that says "I'm working hard for you." */
 .emby-stats .transcoding .fa-cogs {
   animation: fa-spin 2s infinite linear;
   color: #ffcc00;
+}
+
+/* Compact Stats - Full sci-fi dashboard mode engaged */
+.compact-stats-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.stream-indicator {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 2px solid #4a90e2;
+  border-radius: 12px;
+  padding: 8px 16px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 0 20px rgba(74, 144, 226, 0.3);
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+.stream-indicator.idle {
+  border-color: #666;
+  box-shadow: 0 0 10px rgba(102, 102, 102, 0.2);
+  animation: none;
+}
+
+.stream-count {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #4a90e2;
+  line-height: 1;
+}
+
+.stream-indicator.idle .stream-count {
+  color: #666;
+}
+
+.stream-label {
+  font-size: 0.7em;
+  color: #888;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.transcoding-indicator {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ffcc00;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+}
+
+.transcoding-icon {
+  font-size: 0.8em;
+  color: #000;
+  animation: fa-spin 1.5s infinite linear;
+}
+
+.transcoding-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 0.7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Pulsing glow animation - because everything looks cooler with a glow */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(74, 144, 226, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(74, 144, 226, 0.6);
+  }
 }
 
 /* Now Playing - The Star of the Show */
@@ -143,7 +254,7 @@
   color: #ccc;
 }
 
-/* Compact Layout - For when you're in a hurry */
+/* Compact Layout - For when you're in a hurry and want the essentials */
 .emby-wrapper .emby-server.compact .now-playing-art {
   width: 50px;
   height: 75px;
@@ -156,7 +267,7 @@
   display: none; /* Too much clutter for a quick glance. */
 }
 
-/* The 'Something's Fucked' Message */
+/* The 'Something's Fucked' Message - honest error reporting */
 .offline-message {
   color: #ffcc00; /* A nice, alarming yellow. */
   font-weight: bold;

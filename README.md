@@ -68,6 +68,7 @@ To use this module, add the following configuration block to the modules array i
 | `servers`          | An array of your Emby server objects. This is the main event.                            | `[]`    |
 | `updateInterval`   | How often to poke the servers for new info (in milliseconds).                            | `60000` |
 | `fontAwesomeVersion` | Set to `4` or `5` depending on your core MagicMirror setup. Mismatching is a bad look. | `5`     |
+| `layoutDirection`  | `'vertical'` for stacked servers, `'horizontal'` for side-by-side. Choose your fighter. | `'vertical'` |
 
 ### Per-Server Options
 
@@ -82,6 +83,21 @@ These can be set for each server in the `servers` array. If you don't set them, 
 | `showRecentlyAdded`  | `true` to show the list of new arrivals.                                                         | `false`                                    |
 | `recentlyAddedCount` | How many new items to show. Don't get greedy.                                                    | `5`                                        |
 | `useSeriesPoster`    | For TV episodes, `true` shows the main series art. `false` shows the episode thumbnail.          | `true`                                     |
+
+## Layout Options
+
+### Vertical Layout (Default)
+Servers are stacked vertically, one after another. Classic, reliable, like a good bourbon.
+
+### Horizontal Layout
+Servers are displayed side-by-side. Perfect for wide screens or when you want to show off multiple servers at once. Set `layoutDirection: 'horizontal'` in your config.
+
+### Compact View Enhancements
+The compact layout now features a futuristic active streams indicator with:
+- **Stream Counter**: Shows total active streams in a sci-fi style display
+- **Transcoding Badge**: A glowing indicator when transcoding is happening
+- **Idle State**: Clean display when no streams are active
+- **Pulsing Animation**: Because everything looks cooler with a subtle glow
 
 ## Dependencies
 

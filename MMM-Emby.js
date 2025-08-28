@@ -20,7 +20,8 @@ Module.register('MMM-Emby', {
         initialLoadDelay: 0,
         animationSpeed: 1000,
         servers: [],
-        fontAwesomeVersion: 5
+        fontAwesomeVersion: 5,
+        layoutDirection: 'vertical' // 'vertical' or 'horizontal' - because sometimes you want your servers lined up like a firing squad
     },
 
     start: function() {
@@ -46,6 +47,11 @@ Module.register('MMM-Emby', {
     getDom: function() {
         var wrapper = document.createElement('div');
         wrapper.className = 'emby-wrapper';
+        
+        // Add layout direction class - because presentation matters, even for digital overlords
+        if (this.config.layoutDirection === 'horizontal') {
+            wrapper.className += ' horizontal-layout';
+        }
 
         if (this.config.servers.length === 0) {
             wrapper.innerHTML = 'No servers configured.';
@@ -111,6 +117,11 @@ Module.register('MMM-Emby', {
         return wrapper;
     },
 
+    /**
+     * Add the stats section - the digital pulse of your media empire.
+     * Shows who's watching what and how hard your server is working.
+     * It's like a heart monitor for your entertainment addiction.
+     */
     addStatsSection: function(serverDiv, server) {
         var statsDiv = document.createElement('div');
         statsDiv.className = 'emby-stats';
@@ -118,22 +129,56 @@ Module.register('MMM-Emby', {
         var iconPrefix = this.config.fontAwesomeVersion === 4 ? 'fa' : 'fas';
         var statsHtml = '';
         
-        if (server.stats.activeUsers > 0) {
-            statsHtml += '<span><i class="' + iconPrefix + ' fa-users"></i> ' + server.stats.activeUsers + ' active</span>';
-        }
-        
-        if (server.stats.transcodingSessions > 0) {
-            statsHtml += '<span class="transcoding"><i class="' + iconPrefix + ' fa-cogs"></i> ' + server.stats.transcodingSessions + ' transcoding</span>';
-        }
-        
-        if (statsHtml === '' && server.online) {
-            statsHtml = '<span><i class="' + iconPrefix + ' fa-check-circle"></i> Online</span>';
+        // For compact layout, we're going full sci-fi dashboard
+        if (server.config.layout === 'compact') {
+            var totalStreams = server.stats.activeUsers;
+            var transcodingStreams = server.stats.transcodingSessions;
+            
+            if (totalStreams > 0) {
+                statsHtml += '<div class="compact-stats-container">';
+                statsHtml += '<div class="stream-indicator">';
+                statsHtml += '<div class="stream-count">' + totalStreams + '</div>';
+                statsHtml += '<div class="stream-label">ACTIVE</div>';
+                if (transcodingStreams > 0) {
+                    statsHtml += '<div class="transcoding-indicator">';
+                    statsHtml += '<i class="' + iconPrefix + ' fa-cogs transcoding-icon"></i>';
+                    statsHtml += '<span class="transcoding-count">' + transcodingStreams + '</span>';
+                    statsHtml += '</div>';
+                }
+                statsHtml += '</div>';
+                statsHtml += '</div>';
+            } else if (server.online) {
+                statsHtml += '<div class="compact-stats-container">';
+                statsHtml += '<div class="stream-indicator idle">';
+                statsHtml += '<div class="stream-count">0</div>';
+                statsHtml += '<div class="stream-label">IDLE</div>';
+                statsHtml += '</div>';
+                statsHtml += '</div>';
+            }
+        } else {
+            // Standard detailed view - because sometimes you want the full story
+            if (server.stats.activeUsers > 0) {
+                statsHtml += '<span><i class="' + iconPrefix + ' fa-users"></i> ' + server.stats.activeUsers + ' active</span>';
+            }
+            
+            if (server.stats.transcodingSessions > 0) {
+                statsHtml += '<span class="transcoding"><i class="' + iconPrefix + ' fa-cogs"></i> ' + server.stats.transcodingSessions + ' transcoding</span>';
+            }
+            
+            if (statsHtml === '' && server.online) {
+                statsHtml = '<span><i class="' + iconPrefix + ' fa-check-circle"></i> Online</span>';
+            }
         }
         
         statsDiv.innerHTML = statsHtml;
         serverDiv.appendChild(statsDiv);
     },
 
+    /**
+     * The crown jewel - what's playing right now.
+     * This is where we show off like a peacock in mating season.
+     * Art, progress bars, user info - the whole nine yards.
+     */
     addNowPlayingSection: function(serverDiv, server) {
         if (!server.sessions || server.sessions.length === 0) {
             return;
@@ -146,16 +191,15 @@ Module.register('MMM-Emby', {
             var nowPlayingDiv = document.createElement('div');
             nowPlayingDiv.className = 'now-playing-item';
             
-            // Artwork
+            // Artwork - because a picture is worth a thousand words, and we're not that verbose
             var artDiv = document.createElement('div');
             artDiv.className = 'now-playing-art';
             var artImg = document.createElement('img');
             
-            // Determine which image to use
+            // Determine which image to use - series poster usually looks less like ass
             var imageId = item.Id;
             var imageType = 'Primary';
             
-            // Use series poster for episodes if configured
             if (server.config.useSeriesPoster !== false && item.Type === 'Episode' && item.SeriesId) {
                 imageId = item.SeriesId;
             }
@@ -169,11 +213,11 @@ Module.register('MMM-Emby', {
             artDiv.appendChild(artImg);
             nowPlayingDiv.appendChild(artDiv);
             
-            // Info section
+            // Info section - the meat and potatoes
             var infoDiv = document.createElement('div');
             infoDiv.className = 'now-playing-info';
             
-            // Title
+            // Title - what the hell are they watching?
             var titleDiv = document.createElement('div');
             titleDiv.className = 'title';
             var title = item.Name;
@@ -183,7 +227,7 @@ Module.register('MMM-Emby', {
             titleDiv.innerHTML = title;
             infoDiv.appendChild(titleDiv);
             
-            // User and device
+            // User and device - who's hogging the bandwidth?
             var userDiv = document.createElement('div');
             userDiv.className = 'user-device';
             var userInfo = session.UserName || 'Unknown User';
@@ -193,7 +237,7 @@ Module.register('MMM-Emby', {
             userDiv.innerHTML = userInfo;
             infoDiv.appendChild(userDiv);
             
-            // Stream info
+            // Stream info - are we transcoding or playing nice?
             var streamDiv = document.createElement('div');
             streamDiv.className = 'stream-info';
             var streamType = 'Direct Play';
@@ -203,7 +247,7 @@ Module.register('MMM-Emby', {
             streamDiv.innerHTML = streamType;
             infoDiv.appendChild(streamDiv);
             
-            // Progress bar
+            // Progress bar - because we all need to know how much time we're wasting
             if (session.PlayState && typeof session.PlayState.PositionTicks !== 'undefined' && item.RunTimeTicks) {
                 var progressContainer = document.createElement('div');
                 progressContainer.className = 'progress-bar-container';
@@ -216,7 +260,7 @@ Module.register('MMM-Emby', {
                 progressContainer.appendChild(progressBar);
                 infoDiv.appendChild(progressContainer);
                 
-                // Time info
+                // Time info - the countdown to your next life decision
                 var timeDiv = document.createElement('div');
                 timeDiv.className = 'time-info';
                 var currentTime = this.ticksToTime(session.PlayState.PositionTicks);
@@ -230,6 +274,10 @@ Module.register('MMM-Emby', {
         }
     },
 
+    /**
+     * Recently added section - the new kids on the block.
+     * Fresh content to feed your insatiable appetite for entertainment.
+     */
     addRecentlyAddedSection: function(serverDiv, server) {
         if (!server.recentlyAdded || server.recentlyAdded.length === 0) {
             return;
@@ -263,6 +311,10 @@ Module.register('MMM-Emby', {
         serverDiv.appendChild(recentDiv);
     },
 
+    /**
+     * Convert Emby's ridiculous tick system to something humans can understand.
+     * Because apparently counting in 10,000,000ths of a second made sense to someone.
+     */
     ticksToTime: function(ticks) {
         var seconds = Math.floor(ticks / 10000000);
         var hours = Math.floor(seconds / 3600);
@@ -276,22 +328,29 @@ Module.register('MMM-Emby', {
         }
     },
     
-    // This is the corrected update logic to prevent the infinite loop
+    /**
+     * Schedule updates like a responsible adult.
+     * No infinite loops here - we're not savages.
+     */
     scheduleUpdate: function() {
         var self = this;
         
-        // Use setTimeout for the initial fetch after the specified delay.
+        // Use setTimeout for the initial fetch after the specified delay
         setTimeout(function() {
-            self.getData(); // Fetch data for the first time.
+            self.getData(); // Fetch data for the first time
             
-            // After the first fetch, set up the interval for all subsequent updates.
+            // After the first fetch, set up the interval for all subsequent updates
             setInterval(function() {
                 self.getData();
-            }, self.config.updateInterval); // Use the real update interval from the config.
+            }, self.config.updateInterval); // Use the real update interval from the config
             
         }, this.config.initialLoadDelay);
     },
 
+    /**
+     * Get the data from our backend helper.
+     * This is where we ask nicely for information and hope the servers cooperate.
+     */
     getData: function() {
         Log.info(`[MMM-Emby] Requesting data from helper.`);
         this.sendSocketNotification('GET_EMBY_DATA', { config: this.config });
