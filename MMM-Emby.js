@@ -92,8 +92,8 @@ Module.register('MMM-Emby', {
             // Server name
             var nameDiv = document.createElement('div');
             nameDiv.className = 'emby-server-name';
-            // Use the Emby logo - because branding matters, even in the digital afterlife
-            nameDiv.innerHTML = '<span class="emby-logo">📺</span>' + server.name;
+            // Use the proper Emby logo - because branding matters, even in the digital afterlife
+            nameDiv.innerHTML = '<i class="emby-logo fas fa-tv"></i>' + server.name;
             if (server.systemInfo && server.systemInfo.Version) {
                 nameDiv.innerHTML += ' <span class="version">v' + server.systemInfo.Version + '</span>';
             }
