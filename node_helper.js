@@ -89,6 +89,12 @@ module.exports = NodeHelper.create({
         // Determine how many requests we'll make based on config - no point asking for shit we don't want
         if (server.showNowPlaying !== false) expectedRequests++;
         if (server.showRecentlyAdded === true) expectedRequests++;
+        
+        // Always fetch sessions if we want to show server stats - because we need that data for stream counts
+        var needSessionsForStats = server.showServerStats !== false;
+        if (needSessionsForStats && server.showNowPlaying === false) {
+            expectedRequests++; // Add sessions request even if not showing now playing
+        }
 
         /**
          * Check if we're done with this server.
@@ -128,7 +134,8 @@ module.exports = NodeHelper.create({
         });
 
         // 2. Get Sessions (Now Playing) - who's watching what and how
-        if (server.showNowPlaying !== false) {
+        // Fetch sessions if we're showing now playing OR if we need stats (because stats need session data)
+        if (server.showNowPlaying !== false || needSessionsForStats) {
             var sessionsUrl = server.host + ':' + server.port + '/emby/Sessions?api_key=' + server.apiKey;
             Log.info(`[MMM-Emby] Fetching sessions for server: ${server.name}`);
 
@@ -154,7 +161,9 @@ module.exports = NodeHelper.create({
                         
                         // Debug: Log the raw session data to see what we're working with
                         if (sessions.length > 0) {
-                            Log.info(`[MMM-Emby] ${server.name} - Sample session data:`, JSON.stringify(sessions[0], null, 2));
+                            Log.info(`[MMM-Emby] ${server.name} - Sample session data:`, JSON.stringify(sessions[0], ['Id', 'UserId', 'UserName', 'Client', 'DeviceName', 'NowPlayingItem', 'PlayState', 'TranscodingInfo'], 2));
+                        } else {
+                            Log.info(`[MMM-Emby] ${server.name} - No active sessions found.`);
                         }
                     } catch (e) {
                         Log.error(`[MMM-Emby] Error parsing sessions JSON for ${server.name}: ${e}`);
