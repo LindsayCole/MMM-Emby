@@ -2,7 +2,7 @@
 
 A module for [MagicMirror²](https://magicmirror.builders/) to display the status of your Emby servers. Now with more features than you can shake a stick at, and fewer bugs than a roach motel.
 
-![Screenshot](https://i.imgur.com/your-screenshot.png) <!-- Update this when you get around to it, or don't. I'm not your mother. -->
+![Screenshot](https://i.imgur.com/Mr0zN9f.png) <!-- Update this when you get around to it, or don't. I'm not your mother. -->
 
 ## Features
 
