@@ -148,8 +148,10 @@ module.exports = NodeHelper.create({
                         });
                         
                         // Calculate stats - the numbers that matter
-                        // Count all sessions that have any activity - because we want the real numbers
-                        serverInfo.stats.activeUsers = sessions.length;
+                        // Count only sessions that are actually playing something - because idle sessions don't count
+                        serverInfo.stats.activeUsers = sessions.filter(function(session) {
+                            return session.NowPlayingItem && session.NowPlayingItem.Id;
+                        }).length;
                         
                         // Count transcoding sessions - when your server is working overtime
                         serverInfo.stats.transcodingSessions = sessions.filter(function(session) {
