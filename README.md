@@ -123,23 +123,6 @@ The compact layout now features a futuristic active streams indicator with:
 
 Installed automatically when you run `npm install`. Don't worry your pretty little head about it.
 
-## Implementation Status
-
-✅ **All functionality is fully implemented and working:**
-- Multi-server monitoring with individual configurations
-- Real-time active stream counting (only playing content, not idle connections)
-- Transcoding detection and display
-- Now playing information with poster art and progress bars
-- Recently added content display
-- Compact and detailed layout modes
-- Horizontal and vertical layout directions
-- Proper error handling for offline servers
-- Green Emby logo branding
-- Subtle transcoding indicators (no more garish colors)
-- Centered layouts in compact view
-
-**No mock-ups, no simulations, no placeholder bullshit.** Everything you see in the code actually works.
-
 ## Troubleshooting
 
 **Server shows as offline?**
@@ -162,7 +145,6 @@ Sure, why not. Send a pull request. Just make it good, and don't break anything 
 ## Authors
 
 * Lindsay Cole
-* Gemini (the AI that actually writes decent code)
 
 ## License
 
