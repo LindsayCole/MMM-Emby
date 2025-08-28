@@ -59,7 +59,7 @@
 .emby-server-name .emby-logo {
   margin-right: 8px;
   font-size: 1.2em;
-  filter: hue-rotate(200deg); /* Give it that Emby blue tint */
+  color: #52b54b; /* Emby's signature green */
 }
 
 .emby-server-name .version {
@@ -152,19 +152,19 @@
   position: absolute;
   top: -8px;
   right: -8px;
-  background: #ffcc00;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
   border-radius: 50%;
   width: 24px;
   height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.4);
 }
 
 .transcoding-icon {
   font-size: 0.8em;
-  color: #000;
+  color: #fff;
   animation: fa-spin 1.5s infinite linear;
 }
 
@@ -172,7 +172,7 @@
   position: absolute;
   top: -6px;
   right: -6px;
-  background: #ff4444;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
   color: white;
   border-radius: 50%;
   width: 16px;
@@ -182,6 +182,7 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  box-shadow: 0 0 8px rgba(231, 76, 60, 0.3);
 }
 
 /* Pulsing glow animation - because everything looks cooler with a glow */
